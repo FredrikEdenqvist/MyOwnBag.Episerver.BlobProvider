@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<configuration>
+  <episerver.framework>
+    <blob defaultProvider="mongodbBlobProvider">
+      <providers>
+        <add
+          name="mongodbBlobProvider"
+          type="MyOwnBag.Episerver.BlobProviders.MongoDbBlobProvider, MyOwnBag.Episerver.BlobProviders, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"
+          ConnectionString="mongodb://localhost:27017"
+          Database="EpiServerDatabaseBlob"
+          Bucket="EpiServerBucketBlob" />
+      </providers>
+    </blob>
+  </episerver.framework>
+</configuration>
