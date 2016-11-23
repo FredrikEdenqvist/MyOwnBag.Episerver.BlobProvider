@@ -37,15 +37,20 @@ namespace MyOwnBag.Episerver.BlobProviders
 
         public override Blob CreateBlob(Uri id, string extension)
         {
-            return GetBlob(Blob.NewBlobIdentifier(id, extension));
+            return GetMongoDbBlob(Blob.NewBlobIdentifier(id, extension));
         }
 
         public override void Delete(Uri id)
         {
-            new MongoDbBlob(id, _fileBucket).Delete();
+            GetMongoDbBlob(id).Delete();
         }
 
         public override Blob GetBlob(Uri id)
+        {
+            return GetMongoDbBlob(id);
+        }
+
+        private MongoDbBlob GetMongoDbBlob(Uri id)
         {
             return new MongoDbBlob(id, _fileBucket);
         }
