@@ -9,7 +9,7 @@ namespace MyOwnBag.Episerver.BlobProviders
     public class MongoDbBlobProvider : BlobProvider
     {
         private IGridFSBucket _fileBucket;
-        private string _mongoBbConnectionString;
+        private string _mongoDbConnectionString;
         private string _bucketName;
         private string _database;
 
@@ -22,13 +22,13 @@ namespace MyOwnBag.Episerver.BlobProviders
 
         public override void Initialize(string name, NameValueCollection config)
         {
-            _mongoBbConnectionString = config.Get(ConnectionStringKey) ?? string.Empty;
+            _mongoDbConnectionString = config.Get(ConnectionStringKey) ?? string.Empty;
             _database = config.Get(DatabaseKey) ?? DefaultDatabase;
             _bucketName = config.Get(BucketKey) ?? DefaultBucket;
 
-            var mongoclient = (string.IsNullOrEmpty(_mongoBbConnectionString))
+            var mongoclient = (string.IsNullOrEmpty(_mongoDbConnectionString))
                 ? new MongoClient()
-                : new MongoClient(_mongoBbConnectionString);
+                : new MongoClient(_mongoDbConnectionString);
 
             _fileBucket = new GridFSBucket(mongoclient.GetDatabase(_database), new GridFSBucketOptions { BucketName = _bucketName });
 
