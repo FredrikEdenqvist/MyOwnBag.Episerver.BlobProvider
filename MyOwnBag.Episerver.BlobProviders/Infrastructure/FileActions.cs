@@ -31,10 +31,7 @@ namespace MyOwnBag.Episerver.BlobProviders.Infrastructure
             if (id.IsEmpty())
                 throw new FileNotFoundException($"{uri.OriginalString} is not present in database.");
 
-            return _fileBucket.OpenDownloadStream(id, new GridFSDownloadOptions
-            {
-                Seekable = true
-            });
+            return _fileBucket.OpenDownloadStream(id, new GridFSDownloadOptions { Seekable = true });
         }
 
         public void Delete(Uri uri)
@@ -45,10 +42,10 @@ namespace MyOwnBag.Episerver.BlobProviders.Infrastructure
                 _fileBucket.Delete(id);
         }
 
-        private ObjectId GetId(Uri id)
+        private ObjectId GetId(Uri uri)
         {
-            // Attempting to matching default index { "filename": 1, "uploadDate": 1 }
-            var filter = Builders<GridFSFileInfo>.Filter.Eq(x => x.Filename, id.OriginalString);
+            // Attempting to match default index { "filename": 1, "uploadDate": 1 }
+            var filter = Builders<GridFSFileInfo>.Filter.Eq(x => x.Filename, uri.OriginalString);
             var options = new GridFSFindOptions
             {
                 Limit = 1,
