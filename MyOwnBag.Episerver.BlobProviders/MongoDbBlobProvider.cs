@@ -1,17 +1,13 @@
 ﻿using EPiServer.Framework.Blobs;
-using MongoDB.Driver;
-using MongoDB.Driver.GridFS;
 using System;
 using System.Collections.Specialized;
+using MyOwnBag.Episerver.BlobProviders.Infrastructure;
 
 namespace MyOwnBag.Episerver.BlobProviders
 {
     public class MongoDbBlobProvider : BlobProvider
     {
-        private IGridFSBucket _fileBucket;
-        private string _mongoDbConnectionString;
-        private string _bucketName;
-        private string _database;
+        private IFileActions _fileActions;
 
         private const string ConnectionStringKey = "ConnectionString";
         private const string DatabaseKey = "Database";
@@ -22,16 +18,7 @@ namespace MyOwnBag.Episerver.BlobProviders
 
         public override void Initialize(string name, NameValueCollection config)
         {
-            _mongoDbConnectionString = config.Get(ConnectionStringKey) ?? string.Empty;
-            _database = config.Get(DatabaseKey) ?? DefaultDatabase;
-            _bucketName = config.Get(BucketKey) ?? DefaultBucket;
-
-            var mongoclient = (string.IsNullOrEmpty(_mongoDbConnectionString))
-                ? new MongoClient()
-                : new MongoClient(_mongoDbConnectionString);
-
-            _fileBucket = new GridFSBucket(mongoclient.GetDatabase(_database), new GridFSBucketOptions { BucketName = _bucketName });
-
+            _fileActions = FileActions.GetFileAction(config.Get(ConnectionStringKey) ?? string.Empty, config.Get(DatabaseKey) ?? DefaultDatabase, config.Get(BucketKey) ?? DefaultBucket);
             base.Initialize(name, config);
         }
 
@@ -52,7 +39,7 @@ namespace MyOwnBag.Episerver.BlobProviders
 
         private MongoDbBlob GetMongoDbBlob(Uri id)
         {
-            return new MongoDbBlob(id, _fileBucket);
+            return new MongoDbBlob(id, _fileActions);
         }
     }
 }

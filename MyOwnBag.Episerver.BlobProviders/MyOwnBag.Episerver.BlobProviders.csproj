@@ -121,9 +121,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Infrastructure\FileActions.cs" />
+    <Compile Include="Infrastructure\IFileActions.cs" />
     <Compile Include="MongoDbBlob.cs" />
     <Compile Include="MongoDbBlobProvider.cs" />
-    <Compile Include="ObjectIdExtensions.cs" />
+    <Compile Include="Infrastructure\ObjectIdExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

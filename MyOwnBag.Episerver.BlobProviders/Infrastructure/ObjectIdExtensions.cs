@@ -1,6 +1,6 @@
 ﻿using MongoDB.Bson;
 
-namespace MyOwnBag.Episerver.BlobProviders
+namespace MyOwnBag.Episerver.BlobProviders.Infrastructure
 {
     public static class ObjectIdExtensions
     {

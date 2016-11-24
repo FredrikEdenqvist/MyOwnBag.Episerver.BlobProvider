@@ -1,69 +1,32 @@
 ﻿using EPiServer.Framework.Blobs;
-using MongoDB.Bson;
-using MongoDB.Driver;
-using MongoDB.Driver.GridFS;
 using System;
 using System.IO;
-using System.Linq;
+using MyOwnBag.Episerver.BlobProviders.Infrastructure;
 
 namespace MyOwnBag.Episerver.BlobProviders
 {
     public class MongoDbBlob : Blob
     {
-        private readonly IGridFSBucket _fileBucket;
-        private ObjectId _objId;
+        private readonly IFileActions _fileActions;
 
-        public MongoDbBlob(Uri id, IGridFSBucket fileBucket) : base(id)
+        public MongoDbBlob(Uri id, IFileActions fileActions) : base(id)
         {
-            _fileBucket = fileBucket;
-            _objId = ObjectId.Empty;
-        }
-
-        private ObjectId GetId()
-        {
-            if (_objId.IsNotEmpty())
-                return _objId;
-
-            // Attempting to matching default index { "filename": 1, "uploadDate": 1 }
-            var filter = Builders<GridFSFileInfo>.Filter.Eq(x => x.Filename, ID.OriginalString);
-            var sort = Builders<GridFSFileInfo>.Sort.Ascending(x => x.UploadDateTime);
-            var options = new GridFSFindOptions
-            {
-                Limit = 1,
-                Sort = sort
-            };
-
-            using (var cursor = _fileBucket.Find(filter, options))
-            {
-                _objId = cursor.ToList().FirstOrDefault()?.Id ?? ObjectId.Empty;
-            }
-
-            return _objId;
+            _fileActions = fileActions;
         }
 
         public virtual void Delete()
         {
-            if (GetId().IsNotEmpty())
-                _fileBucket.Delete(GetId());
+            _fileActions.Delete(ID);
         }
 
         public override Stream OpenRead()
         {
-            if (GetId().IsEmpty())
-                throw new FileNotFoundException($"{ID.OriginalString} is not present in database.");
-
-            return _fileBucket.OpenDownloadStream(GetId(), new GridFSDownloadOptions
-            {
-                Seekable = true
-            });
+            return _fileActions.GetReader(ID);
         }
 
         public override Stream OpenWrite()
         {
-            var stream = _fileBucket.OpenUploadStream(ID.OriginalString);
-            _objId = stream.Id;
-
-            return stream;
+            return _fileActions.GetWriter(ID);
         }
 
         public override void Write(Stream data)
