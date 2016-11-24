@@ -13,12 +13,9 @@ namespace MyOwnBag.Episerver.BlobProviders
         private const string DatabaseKey = "Database";
         private const string BucketKey = "Bucket";
 
-        private const string DefaultDatabase = "EpiServerDatabaseBlob";
-        private const string DefaultBucket = "EpiServerBucketBlob";
-
         public override void Initialize(string name, NameValueCollection config)
         {
-            _fileActions = FileActions.GetFileAction(config.Get(ConnectionStringKey) ?? string.Empty, config.Get(DatabaseKey) ?? DefaultDatabase, config.Get(BucketKey) ?? DefaultBucket);
+            _fileActions = FileActions.GetFileAction(config.Get(ConnectionStringKey), config.Get(DatabaseKey), config.Get(BucketKey));
             base.Initialize(name, config);
         }
 

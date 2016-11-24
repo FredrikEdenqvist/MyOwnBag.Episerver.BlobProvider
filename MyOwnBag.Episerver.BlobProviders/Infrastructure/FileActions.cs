@@ -9,6 +9,9 @@ namespace MyOwnBag.Episerver.BlobProviders.Infrastructure
 {
     public class FileActions : IFileActions
     {
+        private const string DefaultDatabase = "EpiServerDatabaseBlob";
+        private const string DefaultBucket = "EpiServerBucketBlob";
+
         private readonly IGridFSBucket _fileBucket;
 
         public FileActions(IGridFSBucket fileBucket)
@@ -64,7 +67,7 @@ namespace MyOwnBag.Episerver.BlobProviders.Infrastructure
                                 ? new MongoClient()
                                 : new MongoClient(mongoDbConnectionString);
 
-            return new FileActions(new GridFSBucket(mongoclient.GetDatabase(database), new GridFSBucketOptions { BucketName = bucketName }));
+            return new FileActions(new GridFSBucket(mongoclient.GetDatabase(database ?? DefaultDatabase), new GridFSBucketOptions { BucketName = bucketName ?? DefaultBucket }));
         }
     }
 }
