@@ -45,6 +45,7 @@ namespace MyOwnBag.Episerver.BlobProviders.Infrastructure
         private ObjectId GetId(Uri uri)
         {
             // Attempting to match default index { "filename": 1, "uploadDate": 1 }
+            // Ref: https://github.com/mongodb/specifications/blob/master/source/gridfs/gridfs-spec.rst#indexes
             var filter = Builders<GridFSFileInfo>.Filter.Eq(x => x.Filename, uri.OriginalString);
             var options = new GridFSFindOptions
             {
