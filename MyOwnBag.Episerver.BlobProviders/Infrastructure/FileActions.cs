@@ -59,13 +59,22 @@ namespace MyOwnBag.Episerver.BlobProviders.Infrastructure
             }
         }
 
-        public static FileActions GetFileAction(string mongoDbConnectionString, string database, string bucketName)
+        public static IFileActions GetFileAction(string mongoDbConnectionString, string database, string bucketName)
         {
-            var mongoclient = string.IsNullOrEmpty(mongoDbConnectionString)
-                                ? new MongoClient()
-                                : new MongoClient(mongoDbConnectionString);
+            return new FileActions(new GridFSBucket(GetClient(mongoDbConnectionString).GetDatabase(database ?? DefaultDatabase), new GridFSBucketOptions { BucketName = bucketName ?? DefaultBucket }));
+        }
 
-            return new FileActions(new GridFSBucket(mongoclient.GetDatabase(database ?? DefaultDatabase), new GridFSBucketOptions { BucketName = bucketName ?? DefaultBucket }));
+        private static IMongoClient GetClient(string mongoDbConnectionString)
+        {
+            var mongoclient = new MongoClient();
+
+            if (!string.IsNullOrEmpty(mongoDbConnectionString))
+            {
+                var settings = MongoClientSettings.FromUrl(new MongoUrl(mongoDbConnectionString));
+                mongoclient = new MongoClient(settings);
+            }
+
+            return mongoclient;
         }
     }
 }
