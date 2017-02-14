@@ -55,7 +55,7 @@ namespace MyOwnBag.Episerver.BlobProviders.Infrastructure
 
             using (var cursor = _fileBucket.Find(filter, options))
             {
-                return cursor.ToList().FirstOrDefault()?.Id ?? ObjectId.Empty;
+                return cursor.FirstOrDefault()?.Id ?? ObjectId.Empty;
             }
         }
 
